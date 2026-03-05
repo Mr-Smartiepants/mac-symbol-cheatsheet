@@ -1,11 +1,17 @@
 import SwiftUI
 import AppKit
+import ServiceManagement
 
 struct ContentView: View {
 
     // Search
     @State private var query: String = ""
 
+    // Preferences
+    @State private var showSettings = false
+    @State private var launchAtLogin = (SMAppService.mainApp.status == .enabled)
+    @State private var settingsError: String?
+    
     // Favorites persistence
     @AppStorage("favoritesData") private var favoritesData: Data = Data()
 
@@ -159,6 +165,41 @@ struct ContentView: View {
 
     var body: some View {
         VStack(spacing: 10) {
+            
+            HStack {
+                Button {
+                    showSettings.toggle()
+                } label: {
+                    Image(systemName: "gearshape")
+                }
+                .buttonStyle(.borderless)
+                .help("Settings")
+
+                Spacer()
+
+                Button("Quit") {
+                    NSApp.terminate(nil)
+                }
+                .buttonStyle(.borderless)
+            }
+            
+            if showSettings {
+                VStack(alignment: .leading, spacing: 8) {
+                    Toggle("Launch at login", isOn: $launchAtLogin)
+                        .onChange(of: launchAtLogin) { _, newValue in
+                            setLaunchAtLogin(newValue)
+                        }
+
+                    if let settingsError {
+                        Text(settingsError)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    }
+                }
+                .padding(10)
+                .background(.quaternary)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
 
             // Search field
             TextField("Search (e.g. brace, fragezeichen, pipe, kleiner gleich)...", text: $query)
@@ -226,6 +267,23 @@ struct ContentView: View {
 
     private func encodeFavorites(_ set: Set<String>) -> Data {
         (try? JSONEncoder().encode(Array(set))) ?? Data()
+    }
+    
+    // MARK:- LaunchAtLogin
+    
+    private func setLaunchAtLogin(_ enabled: Bool) {
+        do {
+            if enabled {
+                try SMAppService.mainApp.register()
+            } else {
+                try SMAppService.mainApp.unregister()
+            }
+            settingsError = nil
+        } catch {
+            // UI zurückrollen, falls es scheitert
+            launchAtLogin = (SMAppService.mainApp.status == .enabled)
+            settingsError = error.localizedDescription
+        }
     }
 
     private func decodeFavorites(from data: Data) -> Set<String> {
