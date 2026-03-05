@@ -9,13 +9,16 @@ import Foundation
 
 struct SymbolItem: Identifiable {
 
-    let id = UUID()
+    // Stable key for favorites (do NOT use UUID for persistence)
+    var id: String { key }
 
     let symbol: String
-
-    // Apple-Symbolnotation
     let macShortcut: String
-
-    // ausgeschriebene Tasten
     let keys: String
+    let searchTerms: [String]
+
+    // A stable identifier for persistence
+    var key: String {
+        "\(symbol)|\(macShortcut)"
+    }
 }
