@@ -8,11 +8,14 @@
 import Foundation
 
 struct SymbolItem: Identifiable {
+
     let id = UUID()
+
     let symbol: String
-    let name: String
-    let shortcut: String
-    // optional später:
-    // let category: String
-    // let tags: [String]
+
+    // Apple-Symbolnotation
+    let macShortcut: String
+
+    // ausgeschriebene Tasten
+    let keys: String
 }
