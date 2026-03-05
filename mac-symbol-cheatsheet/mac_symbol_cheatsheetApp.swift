@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct mac_symbol_cheatsheetApp: App {
     var body: some Scene {
-        WindowGroup {
+        MenuBarExtra("Symbols", systemImage: "keyboard") {
             ContentView()
         }
     }
