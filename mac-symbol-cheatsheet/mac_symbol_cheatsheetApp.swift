@@ -8,10 +8,14 @@
 import SwiftUI
 
 @main
-struct mac_symbol_cheatsheetApp: App {
+struct ShortcutsWidgetApp: App {
     var body: some Scene {
-        MenuBarExtra("Symbols", systemImage: "keyboard") {
+        MenuBarExtra("Sonderzeichen", systemImage: "keyboard") {
             ContentView()
+                .frame(minWidth: 420, idealWidth: 420, maxWidth: 420,
+                       minHeight: 520, idealHeight: 520, maxHeight: 520)
+                .padding(12)
         }
+        .menuBarExtraStyle(.window)
     }
 }
